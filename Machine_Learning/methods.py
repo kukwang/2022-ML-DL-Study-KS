@@ -31,7 +31,7 @@ def Logistic_Regression(x,y,w,b,number_of_class,learning_rate=0.0001,epochs=3000
     '''
     Logistic Regression based on SGD
     input 
-        x       : [data size,rep]
+        x       : [data_size,rep]
         y       : [data_size,1]   
     parameters
         w       : [rep,number of class]
@@ -40,8 +40,17 @@ def Logistic_Regression(x,y,w,b,number_of_class,learning_rate=0.0001,epochs=3000
         w       : [rep,number of class]
         b       : [1,number of class]
     '''
-   
-    return w,b
+    y = one_hot(y, number_of_class)
+    for i in range(epochs):
+        batch_mask = np.random.choice(x.shape[0], batch_size)
+        x_batch = x[batch_mask]
+        y_batch = y[batch_mask]
+        z = sigmoid(x_batch.dot(w)+b)
+        dw = (y_batch-z).T.dot(x_batch)/batch_size
+        db = (y_batch-z).mean(axis=0)
+        w += learning_rate * dw.T
+        b += learning_rate * db
+    return w, b
 
 def SVM(x,y,w,b,number_of_class,C=30,learning_rate=0.001,epochs=10000):
     '''

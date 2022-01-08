@@ -23,16 +23,18 @@ def main():
         '''
 
     elif args.methods=='Logistic_Regression':
-        x,y = load_iris(return_X_y=True)
+        x, y = load_iris(return_X_y=True)
         number_of_class = len(collections.Counter(y))
         x_train,y_train,x_test,y_test = divide_dataset(x,y)
         w = np.random.uniform(-1,1,(x.shape[1],number_of_class))
         b = np.random.uniform(-1,1,(number_of_class))
-        w,b = globals()[args.methods](x_train,y_train,w,b,number_of_class)
-
+        w, b = globals()[args.methods](x_train,y_train,w,b,number_of_class)
         '''
         PREDICTION
         '''
+        y_test_oh = one_hot(y_test, number_of_class)
+        pred = softmax(x_test.dot(w) + b)
+        print("accuracy: ", np.round((pred.argmax(1) == y_test_oh.argmax(1)).mean(), 4))
 
     elif args.methods=='SVM':
         x,y = make_blobs(n_samples=150,centers=2,random_state=20)
