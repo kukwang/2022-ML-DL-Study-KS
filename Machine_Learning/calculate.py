@@ -60,7 +60,9 @@ def main():
         '''
         PREDICTION
         '''
-      
+        print("precision: ", p_rep_status)
+        print("recall: ", p_pos)
+
     elif args.methods =='K_Means':
         x1 = np.random.uniform(-5,0,100)
         y1 = np.random.uniform(-5,0,100)
