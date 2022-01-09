@@ -74,31 +74,41 @@ def Naive_Bayes(x,y,number_of_class):
         x : [data size, rep] : data_size x rep matrix
         y : [data size, 1] : data_size x 1 matrix
     output
-        p_rep_status    : y의 상태에 따라 rep=1일 확률
-        p_pos           : y=1인 데이터 발생 확률
+        p_rep_status    : y의 상태에 따라 rep=1일 확률   : p(x=1|y)  : [2, rep]
+        p_pos           : y=1인 데이터 발생 확률        : p(y=1)
+        x_threshold
     '''
 
-    # 구간을 균일하게 나누고 그 구간을 저장
-    bins = np.linspace(np.min(x, axis=0), np.max(x, axis=0), num=5)
-    # input x를 discretize한 값을 저장할 변수 선언. [features, samples]
+    # 구간을 2개로 나누고 그 구간을 저장
+    sep = np.linspace(np.min(x, axis=0), np.max(x, axis=0), num=2, endpoint=False)
+    # input x를 discretize한 값을 저장할 변수 선언
+    # shape: [rep, data_size]
     discretize = np.zeros((x.shape[1], x.shape[0]))
-    # x를 discretize, np.digitize가 다차원 연산이 안되서 for문으로 처리
-    # np.digitize의 동작 방식때문에 x랑 bins에 transpose해서 넣음
+    # x를 discretize, np.digitize가 1차원만 연산이 가능하기에 for문으로 처리
+    # np.digitize의 동작 방식때문에 x랑 sep을 transpose한 뒤에 각각의 row를 넣음
     for i in range(x.shape[1]):
-        discretize[i] = np.digitize(x.T[i], bins.T[i])
-    # 헷갈리니 discretize를 transpose
-    discretize = discretize.T
+        discretize[i] = np.digitize(x.T[i], sep.T[i])
+    # element들을 {1, 2} -> {0, 1}로 바꾸고 transpose -> [data_size, rep]
+    discretize = (discretize-1).T
+    
+    # y=1인 data의 개수
+    pos = collections.Counter(y)[1]
+    # y=1인 data 발생 확률
+    p_pos = pos / y.size
+    # y를 옆에다 이어붙여서 [data_size, 1] -> [data_size, rep]
+    # 각각의 rep에 대해 한번에 계산하려고
+    y_tiled = np.tile(y, reps=[discretize.shape[1], 1]).T
 
-    num_of_label_cancer = collections.Counter(y)[1]
-    # p(y=1)
-    py_1 = num_of_label_cancer / y.size
-    # p(y=0)
-    py_0 = 1 - py_1
-    # p(x|y=1)
-    pxy_1 = np.prod()
-    # p(x|y=0)
-    pxy_0 =
+    # x=1이면서 y=0인 data의 개수  : [1, rep]
+    x1y0 = np.multiply(discretize, 1 - y_tiled).sum(axis=0).T
+    # x=1이면서 y=1인 data의 개수  : [1, rep]
+    x1y1 = np.multiply(discretize, y_tiled).sum(axis=0).T
+    # y의 상태에 따라 rep=1일 확률   : [2, rep]
+    p_rep_status = x1y0/pos
+    p_rep_status = np.vstack([p_rep_status, x1y1/pos])
 
+    # 이 변수는 왜 있는 것인지 잘 모르겠다.
+    x_threshold = 0
 
     return x_threshold,p_rep_status,p_pos
 
