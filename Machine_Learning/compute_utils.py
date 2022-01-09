@@ -64,3 +64,14 @@ def divide_dataset(x, y):
     x_test = x[test_mask]
     y_test = y[test_mask]
     return x_train, y_train, x_test, y_test
+
+
+def discretize(x, bound):
+    discretize = np.zeros((x.shape[1], x.shape[0]))
+    # x를 discretize, np.digitize가 1차원만 연산이 가능하기에 for문으로 처리
+    # np.digitize의 동작 방식때문에 x랑 sep을 transpose한 뒤에 각각의 row를 넣음
+    for i in range(x.shape[1]):
+        discretize[i] = np.digitize(x.T[i], bound.T[i])
+    # element들을 {1, 2} -> {0, 1}로 바꾸고 transpose -> [data_size, rep]
+    discretize = (discretize-1).T
+    return discretize
