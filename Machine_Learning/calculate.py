@@ -92,12 +92,6 @@ def main():
             else:
                 pred[data] = 1
 
-        print("pred: ", pred)
-        print("y_test", y_test)
-        print(np.multiply(y_test, pred))
-        print(np.multiply(y_test, 1-pred))
-        print(np.multiply(1-y_test, pred))
-        print(np.multiply(1-y_test, 1-pred))
         # precision과 recall 계산 후 출력
         TP = (np.multiply(y_test, pred)).sum()
         FN = (np.multiply(y_test, 1 - pred)).sum()

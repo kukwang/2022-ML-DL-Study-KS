@@ -79,9 +79,9 @@ def Naive_Bayes(x,y,number_of_class):
         x_threshold
     '''
 
-    # 구간을 2개로 나누고 그 구간을 저장
+    # 각 rep들의 최댓값과 최솟값들을 사용해 구간을 2개로 나눔
     x_threshold = np.linspace(np.min(x, axis=0), np.max(x, axis=0), num=2, endpoint=False)
-    # x를 구간별로 discretize
+    # rep들을 구간별로 discretize
     x_discretize = discretize(x, x_threshold)
     
     # y=1인 data의 개수
